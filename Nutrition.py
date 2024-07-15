@@ -42,9 +42,9 @@ def main():
     run = True
 
     try:
-        patient_database = os.path.join(os.path.expanduser('~'), 'OneDrive - Milwaukee School of Engineering', 'Patient Profiles.csv')
-        food_database = os.path.join(os.path.expanduser('~'), 'OneDrive - Milwaukee School of Engineering', 'Food List.xlsx')
-        day_database = os.path.join(os.path.expanduser('~'), 'OneDrive - Milwaukee School of Engineering', 'Daily Chart.xlsx')
+        patient_database = os.path.join(os.path.expanduser('~'), 'Patient Profiles.csv') #Update with correct file path
+        food_database = os.path.join(os.path.expanduser('~'), 'Food List.xlsx') #Update with correct file path
+        day_database = os.path.join(os.path.expanduser('~'), 'Daily Chart.xlsx') #Update with correct file path
 
         patient_df = pd.read_csv(patient_database)
         food_df = pd.read_excel(food_database)
