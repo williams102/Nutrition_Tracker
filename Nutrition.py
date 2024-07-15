@@ -45,9 +45,9 @@ def main():
     try:
         # patient_database = os.path.join(os.path.expanduser('~'), 'OneDrive - Milwaukee School of Engineering', 'Patient Profiles.csv')
         # print(os.getcwd())
-        patient_database = os.path.join(os.getcwd(), 'Nutrition Tracker/patient_profiles.csv')
-        food_database = os.path.join(os.getcwd(), 'Nutrition Tracker/food_list.xlsx')
-        day_database = os.path.join(os.getcwd(), 'Nutrition Tracker/daily_chart.xlsx')
+        patient_database = os.path.join(os.getcwd(), 'patient_profiles.csv')
+        food_database = os.path.join(os.getcwd(), 'food_list.xlsx')
+        day_database = os.path.join(os.getcwd(), 'daily_chart.xlsx')
 
         patient_df = pd.read_csv(patient_database)
         food_df = pd.read_excel(food_database)
