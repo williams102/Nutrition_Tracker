@@ -43,8 +43,6 @@ def main():
     mid = True
 
     try:
-        # patient_database = os.path.join(os.path.expanduser('~'), 'OneDrive - Milwaukee School of Engineering', 'Patient Profiles.csv')
-        # print(os.getcwd())
         patient_database = os.path.join(os.getcwd(), 'patient_profiles.csv')
         food_database = os.path.join(os.getcwd(), 'food_list.xlsx')
         day_database = os.path.join(os.getcwd(), 'daily_chart.xlsx')
