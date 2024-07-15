@@ -40,17 +40,20 @@ def main():
     print(Back.WHITE+Fore.BLACK)
 
     run = True
+    mid = True
 
     try:
-        patient_database = os.path.join(os.path.expanduser('~'), 'Patient Profiles.csv') #Update with correct file path
-        food_database = os.path.join(os.path.expanduser('~'), 'Food List.xlsx') #Update with correct file path
-        day_database = os.path.join(os.path.expanduser('~'), 'Daily Chart.xlsx') #Update with correct file path
+        # patient_database = os.path.join(os.path.expanduser('~'), 'OneDrive - Milwaukee School of Engineering', 'Patient Profiles.csv')
+        # print(os.getcwd())
+        patient_database = os.path.join(os.getcwd(), 'Nutrition Tracker/patient_profiles.csv')
+        food_database = os.path.join(os.getcwd(), 'Nutrition Tracker/food_list.xlsx')
+        day_database = os.path.join(os.getcwd(), 'Nutrition Tracker/daily_chart.xlsx')
 
         patient_df = pd.read_csv(patient_database)
         food_df = pd.read_excel(food_database)
         day_df = pd.read_excel(day_database)
     except FileNotFoundError:
-        input(Fore.RED+Back.WHITE+'\nFile or directory could not be found. Please check location of file.')
+        input(Fore.RED+Back.WHITE+'\nFile or directory could not be found. Please check location of file and update code accordingly.')
 
     while run:
         today = dt.now()
@@ -71,7 +74,13 @@ def main():
                     pat_frame = nt.search_data(login, patient_df, 'id', disp=False)
                     
                     if isinstance(pat_frame, bool):
-                        continue
+                        res = input(Fore.BLACK+'\nPress any key to search again or type "exit" to return to main menu. ')
+                        if res == 'exit':
+                            mid = False
+                            break
+                        else: 
+                            continue
+
                     elif isinstance(pat_frame, pd.DataFrame):
                         loc = 0
 
@@ -169,53 +178,56 @@ def main():
             if answer == 'quit': 
                 run = False
 
-        day = nt.Day(today.strftime('%m/%d/%Y'), profile.id)
+        if mid:
+            day = nt.Day(today.strftime('%m/%d/%Y'), profile.id)
 
-        last_update = today - datetime.datetime.strptime(profile.update, '%m/%d/%Y')
+            last_update = today - datetime.datetime.strptime(profile.update, '%m/%d/%Y')
 
-        if last_update.days > 30:
-            os.system('cls')
-            print("___________"*10)
-            print(Style.NORMAL+Fore.RED+f"\nIt has been {last_update.days} days since you last updated your profile.")
-            res = user_response(Style.BRIGHT+Fore.BLACK+"\nHas any information changed in that time? (Y/N)\n", ['y', 'n'])
-            
-            if res== 'y':
-                print(Style.NORMAL+"\nPlease select the following information to update: \n\n|\tHeight\t|\tWeight\t|\tLifestyle\t|\tGoal\t|\n")
-                update_list = []
-
-                while len(update_list) < 4:
-                    sel = user_response('\nEnter option: ', ['height', 'weight', 'lifestyle', 'goal', 'end'])
-                    if sel == 'end':
-                        break
-                    elif sel == 'all':
-                        update_list = ['height', 'weight', 'lifestyle', 'goal']
-                    else:
-                        update_list.append(sel)
-
-                for n in update_list:
-                    match n:
-                        case 'height':
-                            feet = ask_user(Style.NORMAL+"\nPlease enter your current height (feet): ", int)
-                            inches = ask_user("\n Please enter your current height (inches): ", float)
-                            profile.height = (feet*12) + inches
-                            profile.bmi = profile.weight / (profile.height**2)*703
-                        case 'weight':
-                            profile.weight = ask_user(Style.NORMAL+"\nPlease enter your current weight (lbs): ", float)
-                            profile.bmi = profile.weight / (profile.height**2)*703
-                        case 'lifestyle':
-                            profile.lifestyle = ask_user(Style.NORMAL+"\nHow active is your lifestyle?\n1. Sedentary\t2. Low physical activity\t3. Moderate physical activity\t4. High physical activity\n", int)
-                        case 'goal':
-                            profile.goal = ask_user(Style.NORMAL+"\nWhat is your weight goal?\n1. Loss\t2. Maintenance\t3. Gain", int)
+            if last_update.days > 30:
+                os.system('cls')
+                print("___________"*10)
+                print(Style.NORMAL+Fore.RED+f"\nIt has been {last_update.days} days since you last updated your profile.")
+                res = user_response(Style.BRIGHT+Fore.BLACK+"\nHas any information changed in that time? (Y/N)\n", ['y', 'n'])
                 
-                profile.calc_eer()
-                profile.update = today.strftime('%m/%d/%Y')
-                print(profile.update)
-                print(type(profile.update))
-                patient_df = profile.save_data(patient_df, patient_database)
-                print(Style.NORMAL+Fore.GREEN+"\nYour profile has been successfully updated.")
-                print(Fore.BLACK)
+                if res== 'y':
+                    print(Style.NORMAL+"\nPlease select the following information to update: \n\n|\tHeight\t|\tWeight\t|\tLifestyle\t|\tGoal\t|\n")
+                    update_list = []
 
-        dvs = nt.daily_value(profile.eer)
+                    while len(update_list) < 4:
+                        sel = user_response('\nEnter option: ', ['height', 'weight', 'lifestyle', 'goal', 'end'])
+                        if sel == 'end':
+                            break
+                        elif sel == 'all':
+                            update_list = ['height', 'weight', 'lifestyle', 'goal']
+                        else:
+                            update_list.append(sel)
+
+                    for n in update_list:
+                        match n:
+                            case 'height':
+                                feet = ask_user(Style.NORMAL+"\nPlease enter your current height (feet): ", int)
+                                inches = ask_user("\n Please enter your current height (inches): ", float)
+                                profile.height = (feet*12) + inches
+                                profile.bmi = profile.weight / (profile.height**2)*703
+                            case 'weight':
+                                profile.weight = ask_user(Style.NORMAL+"\nPlease enter your current weight (lbs): ", float)
+                                profile.bmi = profile.weight / (profile.height**2)*703
+                            case 'lifestyle':
+                                profile.lifestyle = ask_user(Style.NORMAL+"\nHow active is your lifestyle?\n1. Sedentary\t2. Low physical activity\t3. Moderate physical activity\t4. High physical activity\n", int)
+                            case 'goal':
+                                profile.goal = ask_user(Style.NORMAL+"\nWhat is your weight goal?\n1. Loss\t2. Maintenance\t3. Gain", int)
+                    
+                    profile.calc_eer()
+                    profile.update = today.strftime('%m/%d/%Y')
+                    print(profile.update)
+                    print(type(profile.update))
+                    patient_df = profile.save_data(patient_df, patient_database)
+                    print(Style.NORMAL+Fore.GREEN+"\nYour profile has been successfully updated.")
+                    print(Fore.BLACK)
+
+            dvs = nt.daily_value(profile.eer)
+        else:
+            continue
 
         while run:
             os.system('cls')
@@ -303,7 +315,11 @@ def main():
                     res = input(Style.NORMAL+Fore.BLACK+'\nWould you like to view an analysis chart? If no, type "exit" to exit back to menu.')
                     
                     if res != 'exit':
-                        res = user_response("\nPlease select a chart to view:\n1. Daily values\t2. Progress\t3. Plate proportions\t4. Caloric Density\n\nSelection: ", [1, 2, 3, 4])
+                        if day_df.empty:
+                            res = input(Fore.RED+'\nNo data has been entered to generate charts. Please report a meal to view charts.\n\n'+Fore.BLACK+'Press any key to return to main menu. ')
+                            break
+                        else:
+                            res = user_response("\nPlease select a chart to view:\n1. Daily values\t2. Progress\t3. Plate proportions\t4. Caloric Density\n\nSelection: ", [1, 2, 3, 4])
 
                         match res:
                             case 1:
